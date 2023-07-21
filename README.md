@@ -1,6 +1,6 @@
 # Developer Technical Test - Implementation 
 
-Here is a proposed implementation for calculating the odds of the Millennium Falcon reaching Endor at time (see description below).
+Here is a proposed implementation for calculating the odds of the Millennium Falcon reaching Endor in time (see description below).
 
 The `back_end.py` file contains all the functions that read through the falcon and empire json files, as well the universe data base, and computes the probability of success of the ship reaching Endor. 
 

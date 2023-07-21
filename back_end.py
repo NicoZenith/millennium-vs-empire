@@ -1,11 +1,18 @@
 import json 
 import sqlite3
-
 import os 
 
 
 
 def get_all_paths_with_sequential_time(database_path, origin, destination):
+    """
+    Reads through the SQLite database ROUTE and outputs all the possible paths from Tatooine to Endor
+    :database_path: where the database is stored 
+    :origin: the planet the ship starts from (Tatooine)
+    :destination: the planet the ship aims (Endor)
+
+    :return: all paths (stops between Tatooine and Endor) along with their travel times
+    """
     # Establish a connection to the SQLite database
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
@@ -58,6 +65,7 @@ def check_bounty(bounty_hunters, current_day, current_planet):
     :bounty_hunters: stores the information about bounty hunters (day and planet)
     :current_day: the day we check if there is a bounty hunter 
     :current_planet: the planet we check if there is a bounty hunter 
+
     :return: if there is a bounty hunter or not (boolean)
     """
     return any(hunter['day'] == current_day and hunter['planet'] == current_planet for hunter in bounty_hunters)
@@ -69,6 +77,7 @@ def num_of_days_to_wait(base_autonomy, path_times, countdown):
     :base_autonomy: base autonomy of the falcon 
     :path_times: stores the travel times between each planet of the given path 
     :countdown: the number of days before the death star kills 
+
     :return: the number of days we can afford to wait given the countdown and the path 
     """
     autonomy = base_autonomy
@@ -88,6 +97,19 @@ def num_of_days_to_wait(base_autonomy, path_times, countdown):
 
 
 def compute_probas_per_path(all_paths_stops, all_paths_times, base_autonomy, countdown, bounty_hunters, origin_station):
+    """
+    Computes the probability of success of each path going from Tatooine to Endor  
+    This probability is discounted everytime the ship is on the same planet as a bounty hunter 
+    The ship is allowed to wait if it has enough time 
+    :all_paths_stops: list containing each path (= list that contains each stop until Endor)
+    :all_paths_times: list containing each path (= list that contains each travel time until Endor)
+    :base_autonomy: the base autonomy the Falcon has and can refuel to 
+    :countdown: number of days before the Death Star kills 
+    :bounty_hunters: informations about the bounty hunters 
+    :origin_station: where the ship starts from (Tatooine)
+
+    :return: list containing probabilities of success for all paths
+    """
 
     all_paths_probabilities = []
 
@@ -156,6 +178,13 @@ def compute_probas_per_path(all_paths_stops, all_paths_times, base_autonomy, cou
 
 
 def calculate_odds(millennium_file, empire_file):
+    """
+    Reads the millennium and empire files and output the maximal probability of success for the ship arriving to Endor 
+    :millennium_file: contains information about the origin station, the destination station and the routes it can take 
+    :empire_file: contains information about the countdown, and the planet and time the bounty hunters are 
+
+    :return: maximal probability of success (the aim of the project)
+    """
     with open(millennium_file) as millennium:
         data_millennium = json.load(millennium)
 
@@ -181,7 +210,7 @@ def calculate_odds(millennium_file, empire_file):
     all_paths_stops = []  # stores all the paths (planets)
     all_paths_times = []  # stores all the paths (travel times)
 
-    # Store all the paths by planet and by
+    # Store all the paths by planet and by time
     for path in paths:
         stops, travel_times = zip(*path)
         stops = [stop for stop in stops]

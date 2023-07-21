@@ -1,4 +1,8 @@
-# Developer Technical Test
+# Developer Technical Test - Implementation 
+
+Here is a proposed implementation for calculating the odds of the Millennium Falcon reaching Endor at time (see description below).
+
+
 
 ## What are the odds?
 
